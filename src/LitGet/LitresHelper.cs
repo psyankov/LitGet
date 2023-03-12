@@ -52,9 +52,9 @@ namespace LitGet
       {
          ExecutingGetBooks = false;
 
-         _ChromeHelper = new ChromeHelper(App.Config.NewFolder);
+         _ChromeHelper = new ChromeHelper(App.Config.AudioFolder);
 
-         if (!Login(App.Config.UserName, App.Config.Password))
+         if (!Login(App.Config.User.Name, App.Config.User.Password))
          {
             Logger.Write("\n\n ********* Login failed *********");
             _ChromeHelper.Quit();
@@ -70,7 +70,6 @@ namespace LitGet
       public void Disconnect()
       {
          _ChromeHelper?.Quit();
-         Logger.Instance.Dispose();
          Connected = false;
       }
 
@@ -78,7 +77,8 @@ namespace LitGet
       {
          if (File.Exists(_BookDataFilePath))
          {
-            File.Move(_BookDataFilePath, Path.Combine(App.Config.DataFolder, $"{_BookDataFileName}.{DateTime.Now:yyyy-MM-dd-HH-mm-ss}.json"));
+            var modified = File.GetLastWriteTime(_BookDataFilePath);
+            File.Move(_BookDataFilePath, Path.Combine(App.Config.DataFolder, $"{_BookDataFileName}.{modified:yyyy.MM.dd.HH.mm.ss}.json"));
          }
          File.WriteAllText(_BookDataFilePath, JsonSerializer.Serialize(_BookData, _JsonOptions));
       }
@@ -146,7 +146,7 @@ namespace LitGet
          if (_ChromeHelper is null) throw new InvalidOperationException("ChromeHelper is null");
 
          Logger.Write("\n\n ********* Updating book records ********* ");
-         _ChromeHelper.GoToUrl(App.Config.ArchivedUrl);
+         _ChromeHelper.GoToUrl(App.Config.RemovedUrl);
          Sleep(App.Config.WaitPageLoading);
 
          //var pageCountString = _ChromeHelper.TryGetAttribute(By.ClassName("books_container mgrid_wrapper_loader_container"), "data-pages") ?? "Not Found";

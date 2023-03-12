@@ -22,19 +22,30 @@
 
       private Logger()
       {
-         _LogFilePath = Path.Combine(Config.Instance.DataFolder, $"Log.{DateTime.Now:yyyy-MM-dd-HH-mm-ss}.txt");
+         _LogFilePath = Path.Combine(Config.Instance.DataFolder, $"Log.{DateTime.Now:yyyy.MM.dd.HH.mm.ss}.txt");
          _LogWriter = new StreamWriter(_LogFilePath);
       }
 
-      public static void Write(string message)
+      public static void Write(string msg)
       {
-         Instance.WriteLine(message);
+         Instance.WriteLine(msg);
       }
 
-      private void WriteLine(string message)
+      public static void Write(string format, params object?[] args)
       {
-         _LogWriter.WriteLine(message);
-         Console.WriteLine(message);
+         Instance.WriteLine(format, args);
+      }
+
+      private void WriteLine(string msg)
+      {
+         _LogWriter.WriteLine(msg);
+         Console.WriteLine(msg);
+      }
+
+      private void WriteLine(string format, params object?[] args)
+      {
+         _LogWriter.WriteLine(format, args);
+         Console.WriteLine(format, args);
       }
 
       public void Dispose()
