@@ -1,37 +1,38 @@
-﻿namespace LitGet
-{
-   internal class BookFile
-   {
-      public string? FormatName { get; set; }
-      public BookFormat Format { get => GetBookFormat(FormatName, Url); }
-      public string? FileName { get; set; }
-      public string? Url { get; set; }
-      public bool Downloaded { get; set; }
+﻿using System.Text.Json.Serialization;
 
-      public BookFormat GetBookFormat(string? format, string? url)
+namespace LitGet;
+
+internal class BookFile
+{
+   public string? Format { get; set; }
+   public string? FileName { get; set; }
+   public string? FilePath { get; set; }
+   public string? Url { get; set; }
+   public bool Downloaded { get; set; }
+
+   [JsonIgnore]
+   public FileFormat GetFormat
+   {
+      get
       {
-         switch (format)
+         switch (Format)
          {
-            default: return BookFormat.Unknown;
-            case "FB2": return BookFormat.FB2;
-            case "EPUB": return BookFormat.EPUB;
-            case "iOS.EPUB": return BookFormat.iOS_EPUB;
-            case "RTF": return BookFormat.RTF;
-            case "PDF A4": return BookFormat.PDF_A4;
-            case "PDF A6": return BookFormat.PDF_A6;
-            case "MOBI": return BookFormat.MOBI;
+            default: return FileFormat.Unknown;
+            case "FB2": return FileFormat.FB2;
+            case "EPUB": return FileFormat.EPUB;
+            case "iOS.EPUB": return FileFormat.iOS_EPUB;
+            case "RTF": return FileFormat.RTF;
+            case "PDF A4": return FileFormat.PDF_A4;
+            case "PDF A6": return FileFormat.PDF_A6;
+            case "MOBI": return FileFormat.MOBI;
             case "TXT":
-               if (url?.EndsWith(".txt.zip") ?? false)
+               if (Url?.EndsWith(".txt.zip") ?? false)
                {
-                  return BookFormat.TXT_ZIP;
-               }
-               else if(url?.EndsWith(".txt") ?? false)
-               {
-                  return BookFormat.TXT;
+                  return FileFormat.TXT_ZIP;
                }
                else
                {
-                  return BookFormat.Unknown;
+                  return FileFormat.TXT;
                }
          }
       }
