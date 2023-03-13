@@ -1,48 +1,60 @@
-﻿namespace LitGet
+﻿using System.Text.Json.Serialization;
+
+namespace LitGet;
+
+internal class Book
 {
-   internal enum BookType
+   public Book()
    {
-      Audio,
-      Text,
-      Unknown
+      Files = new List<BookFile>();
    }
 
-   internal class Book
+   public string? Id { get; set; }
+   public string? Type { get; set; }
+   public string? CoverUrl { get; set; }
+   public string? Author { get; set; }
+   public string? AuthorUrl { get; set; }
+   public string? Title { get; set; }
+   public string? TitleUrl { get; set; }
+   public List<BookFile> Files { get; set; }
+
+   [JsonIgnore]
+   public BookType EType
    {
-      public Book()
+      get
       {
-         Files = new List<BookFile>();
-      }
-
-      public string? Id { get; set; }
-      public string? Cover { get; set; }
-      public BookType Type { get => GetType(TypeName); }
-      public string? TypeName { get; set; }
-      public string? Author { get; set; }
-      public string? AuthorUrl { get; set; }
-      public string? Title { get; set; }
-      public string? TitleUrl { get; set; }
-      public List<BookFile> Files { get; set; }
-
-      public override string ToString()
-      {
-         return
-            "_________________________________________________________________________________________\n"
-            + $"ID                 {Id}\n"
-            + $"Type               {Type}\n"
-            + $"Author             {Author}\n"
-            + $"Title              {Title}\n"
-            + $"Downloadable       {Files.Count > 0}\n";
-      }
-
-      private BookType GetType(string? type)
-      {
-         switch (type)
+         switch (Type)
          {
+            case "Audio": return BookType.Audio;
+            case "Ebook": return BookType.Ebook;
             default: return BookType.Unknown;
-            case "elektronnaya-kniga": return BookType.Text;
-            case "audiokniga": return BookType.Audio;
          }
       }
+   }
+
+   public void SetType(string type)
+   {
+      switch (type)
+      {
+         case "audiokniga":
+            Type = "Audio";
+            break;
+         case "elektronnaya-kniga":
+            Type = "EBook";
+            break;
+         default:
+            Type = type;
+            break;
+      }
+   }
+
+   public override string ToString()
+   {
+      return
+         "_________________________________________________________________________________________\n"
+         + $"ID                 {Id}\n"
+         + $"Type               {EType}\n"
+         + $"Author             {Author}\n"
+         + $"Title              {Title}\n";
    }
 }
